@@ -1,0 +1,8 @@
+; $Id$
+
+name = Movico
+project = "mvc"
+description = "A scaffolding for creating modules using the Model View Controller design pattern."
+package = "Other"
+version = "6.x"
+core = 6.x
