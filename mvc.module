@@ -60,7 +60,8 @@ $hook_all = $common->get_all_hooks($modules_list, $hooks_list);
 
 
 
-function mvc_menu(){
+function mvc_menu()
+{
 
     $items[ APP_TRIGGER . '/%/%' ] = array(
         'page callback' => 'mvc_controller',
@@ -100,7 +101,8 @@ function __autoload($class)
 
 }
 
-function mvc_controller() {
+function mvc_controller()
+{
 
     $class = arg(1);
     $action = arg(2);
@@ -141,7 +143,8 @@ function mvc_controller() {
  */
 
 
-function mvc_model( $model, $mode, $parameter = NULL ) {
+function mvc_model( $model, $mode, $parameter = NULL )
+{
 
     if($model)
     {
@@ -176,7 +179,8 @@ function mvc_model( $model, $mode, $parameter = NULL ) {
  */
 
 
-function mvc_view($view, $variables = NULL, $output = NULL) {
+function mvc_view($view, $variables = NULL, $output = NULL)
+{
 
     $path = APP_PATH . '/_views' . '/' . $view . '.tpl.php';
 
@@ -214,11 +218,13 @@ function mvc_view($view, $variables = NULL, $output = NULL) {
  * 
  */
 
-function mvc_perm(){
+function mvc_perm()
+{
     return array('access foo', 'access baz');
 }
 
-function mvc_access($uri){
+function mvc_access($uri)
+{
 
     $authorize = array(
         'hello' => array('access foo'),
