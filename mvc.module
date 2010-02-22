@@ -3,131 +3,152 @@
 /**
 * @author Carl McDade
 * @copyright Copyright (c) 2010, Carl McDade
-* @since 2010-02-14
-* @version 0.1
+* @since 2010-02-19
+* @version 0.2
 * @license http://opensource.org/licenses/gpl-license.php GNU Public License
 * @link http://www.drupal.se Drupal Sweden
 */
 
 /**
-* 
-* Define some constants and globals that can be easily changed. Done here because there maybe multiple modules.
-* taking care of different application sets
-* 
-*
-*/
-	
-    define('APP_TRIGGER', 'app');
-    define('APP_PATH', drupal_get_path('module', 'mvc'));
+ *
+ * Define some constants and globals that can be easily changed. Done here because there maybe multiple modules.
+ * taking care of different application sets. Start bootstrapping here.
+ *
+ * @todo create a more structured bootstrap file that can be used in other
+ * situations
+ * 
+ */
+
+define('APP_TRIGGER', 'app');
+define('APP_PATH', drupal_get_path('module', 'mvc'));
+
+global $hook_links, $hook_forms, $hook_content, $hook_blocks, $modules_list, $common, $hook_all;
+
+/*
+ * @todo replace these hard coded value lists with dynamic variables, data
+ * sources and administration GUI
+ */
+
+$modules_list = array('ConClass1','ConClass2','ConClass3','ConClass4','ConClass5');
+$hooks_list = array('hook_links','hook_forms','hook_content','hook_blocks');
+
+$common = new Common();
+foreach($hooks_list as $hook)
+{
+    ${$hook} = $common->get_hooks($modules_list, $hook);
+}
+
+$hook_all = $common->get_all_hooks($modules_list, $hooks_list);
+
 
 
 /**
-*
-* Each call to a function from a path is exchanged through a single Class loader 
-* that loads the Class file and calls the Class methods. In most cases the called 
-* Class is a controller
-* 
-* path and file arguments are not used here because we want to use a single dynamic 
-* file and class loader
-* 
-* formatting only allows page activation under prefixed [app_trigger]/[controller]/[action]
-* 
-* access is always open with the access callback set to true. Access control is 
-* left to mvc_access().
-*
-*/
+ *
+ * Each call to a function from a path is exchanged through a single Class loader
+ * that loads the Class file and calls the Class methods. In most cases the called
+ * Class is a controller
+ *
+ * path and file arguments are not used here because we want to use a single dynamic
+ * file and class loader
+ *
+ * formatting only allows page activation under prefixed [app_trigger]/[controller]/[action]
+ *
+ * access is always open with the access callback set to true. Access control is
+ * left to mvc_access().
+ *
+ */
 
 
 
 function mvc_menu(){
-    
-	$items[ APP_TRIGGER . '/%/%' ] = array(
-		'page callback' => 'mvc_controller',
+
+    $items[ APP_TRIGGER . '/%/%' ] = array(
+        'page callback' => 'mvc_controller',
         'page arguments' => array(1, 2),
         'access callback' => TRUE,
-		'type' => MENU_CALLBACK,
-		
-	);
-	
-	return $items;
-	
+        'type' => MENU_CALLBACK,
+
+    );
+
+    return $items;
+
 }
 
 /**
-* =================================== CONTROLLER ===============================
-* @author Carl McDade
-* @since 2010-02-14
-* Start the contoller class using the autoloader function. The arguments are the Class name and method
-* sent from the routing system. Controllers are contained in a function that sees Drupal and makes Drupal
-* functions available to the Class.
-*/
+ * =================================== CONTROLLER ===============================
+ * @author Carl McDade
+ * @since 2010-02-14
+ * Start the contoller class using the autoloader function. The arguments are the Class name and method
+ * sent from the routing system. Controllers are contained in a function that sees Drupal and makes Drupal
+ * functions available to the Class.
+ *
+ * @todo Test the use of reflection API to aviod instantating the Class and to get more information on arguments
+ * needed for the method rather than forcing them to conform to the URI input.
+ * 
+ */
+
+function __autoload($class)
+{
+    try
+    {
+        require_once APP_PATH . '/_controllers/' . $class . '.class.inc';
+    }
+    catch(Exception $e)
+    {
+        drupal_not_found();
+    }
+
+}
 
 function mvc_controller() {
-    
+
     $class = arg(1);
     $action = arg(2);
     
+
+
     // URI items after the /controller/action are loaded into the function as parameters
-    $parameters = func_get_args();
-    
-    $path = APP_PATH . '/_controllers/' .$class.'.class.inc';
-    
-    if(file_exists($path))
-    {
-        require_once($path);
-    }
-    else
-    {
-        trigger_error("Could not load class '{$class}' from file '{$class}.class.inc'", E_USER_WARNING);
-        return false;
-    }
-    
-    
+    $parameters = func_get_args(); 
+
     $access = mvc_access($action);
     if($access == TRUE)
-    {
-        if(class_exists($class) && method_exists($class,$action))
-        {
-            $controller = new $class;
-            return $controller->$action($parameters[2]);
-        }
-        else
-        {
-            drupal_not_found();
-        }
-        
+    {         
+        $controller = new $class();
+        return $controller->$action($parameters[2]);   
+
     }
     else
     {
-       drupal_access_denied();
+        drupal_access_denied();
     }
-    
+
 }
 
 
 
 /**
-* ==================================== MODEL ===================================
-* @author Carl McDade
-* @since 2010-02-14
-* Start the class loader function. The arguments are the Class name
-*
-* Add any database routines here and load the results into variables. Complicated
-* solutions should be placed in a model file
-*    
-* Add any business logic here and load the results to variables. Complicated
-* solutions should be placed in a model file
-*/
+ * ==================================== MODEL ===================================
+ * @author Carl McDade
+ * @since 2010-02-14
+ * Start the class loader function. The arguments are the Class name
+ *
+ * Add any database routines here and load the results into variables. Complicated
+ * solutions should be placed in a model file
+ *
+ * Add any business logic here and load the results to variables. Complicated
+ * solutions should be placed in a model file
+ * 
+ */
 
 
 function mvc_model( $model, $mode, $parameter = NULL ) {
-    
-    if($model) 
+
+    if($model)
     {
         $path = APP_PATH . '/_models' . '/' . $model . '.model.inc';
         if(file_exists($path))
         {
-            // models can return output if necessary preferably an array 
+            // models can return output if necessary preferably an array
             $output = require_once($path);
         }
         else
@@ -135,63 +156,63 @@ function mvc_model( $model, $mode, $parameter = NULL ) {
             trigger_error("Could not load model '{$model}' from file '{$model}.model.inc'", E_USER_WARNING);
             return false;
         }
-        
+
     }
-    
+
     $data = new $model;
     return $data->$mode($parameter);
 }
 
 
 /**
-* ===================================== VIEW ===================================
-* @author Carl McDade
-* @since 2010-02-14
-* This is where the views are registered to Drupals system. Using the hook_theme 
-* function a template is choosen from the _view directory.Be careful not to use 
-* the same template twice ie. both as parent and child template in the mvc_view().
-* @TODO fix it so that duplicates cannot happen
-*
-*/
+ * ===================================== VIEW ===================================
+ * @author Carl McDade
+ * @since 2010-02-14
+ * This is where the views are registered to Drupals system. Using the hook_theme
+ * function a template is choosen from the _view directory.Be careful not to use
+ * the same template twice ie. both as parent and child template in the mvc_view().
+ * @TODO fix it so that duplicates cannot happen
+ * 
+ */
 
 
 function mvc_view($view, $variables = NULL, $output = NULL) {
-    
-        $path = APP_PATH . '/_views' . '/' . $view . '.tpl.php';
 
-        if (file_exists($path) == false)
+    $path = APP_PATH . '/_views' . '/' . $view . '.tpl.php';
+
+    if (file_exists($path) == false)
+    {
+        trigger_error("Template {$view} not found in ". $path);
+        return false;
+    }
+
+    if(is_array($variables))
+    {
+
+        // Load variables here because they become part of the module not the theme template.php file.
+        foreach ($variables as $key => $value)
         {
-            trigger_error("Template {$view} not found in ". $path);
-            return false;
+            $$key = $value;
         }
 
-        if(is_array($variables))
-        {
-            
-            // Load variables here because they become part of the module not the theme template.php file.
-            foreach ($variables as $key => $value)
-            {
-                $$key = $value;
-            }
-            
-            // pre-load the child template output with variables
-            $output .= theme_render_template($path, $variables);
-        }
-        
-        // output everything into a parent template. Drupals theme system page is the default
-        print theme('page', $output);
-        
+        // pre-load the child template output with variables
+        $output .= theme_render_template($path, $variables);
+    }
+
+    // output everything into a parent template. Drupals theme system page is the default
+    print theme('page', $output);
+
 }
 
 /**
-* the Drupal access control is built into the menu system. This is statically cached, impossible to
-* turn off and creates a performance hit if rebuilt on every page load. I want to use a more dynamic method 
-* So we need a simple access control function to handle URI action calls.
-*
-* @TODO Move the internals of mvc_access() to a _helper Class and add functionality
-* for password authentication and URI wildcards.
-*
-*/
+ * the Drupal access control is built into the menu system. This is statically cached, impossible to
+ * turn off and creates a performance hit if rebuilt on every page load. I want to use a more dynamic method
+ * So we need a simple access control function to handle URI action calls.
+ *
+ * @TODO Move the internals of mvc_access() to a _helper Class and add functionality
+ * for password authentication and URI wildcards.
+ * 
+ */
 
 function mvc_perm(){
     return array('access foo', 'access baz');
@@ -199,62 +220,83 @@ function mvc_perm(){
 
 function mvc_access($uri){
 
-  $authorize = array(
+    $authorize = array(
         'hello' => array('access foo'),
         'hello_log' => array('access baz'),
         'hello_log_view' => array('access foo','access baz'),
-        );
-  
-  foreach($authorize as $key => $value)
-  {
-      if($key == $uri)
-      {
-          $keys = $value;
-          break;
-      }
-  }
-  
-  if(!is_array($keys))
-  {
-      return FALSE;
-  }
-    
-  global $user;
-  static $perm = array();
+        'action3' => array('access foo','access baz'),
+    );
 
-  if ($reset) {
-    $perm = array();
-  }
+    foreach($authorize as $key => $value)
+    {
+        if($key == $uri)
+        {
+            $keys = $value;
+            break;
+        }
+    }
 
-  if (!isset($account))
-  {
-    $account = $user;
-  }
+    if(!is_array($keys))
+    {
+        return FALSE;
+    }
+
+    global $user;
+    static $perm = array();
+
+    if ($reset) {
+        $perm = array();
+    }
+
+    if (!isset($account))
+    {
+        $account = $user;
+    }
 
 
-  // To reduce the number of SQL queries, we buffer the user's permissions
-  // in a static variable.
-  if (!isset($perm[$account->uid]))
-  {
-      $perms = array();
-      $result = db_query("SELECT p.perm FROM {role} r INNER JOIN {permission} p ON p.rid = r.rid WHERE r.rid IN (". db_placeholders($account->roles) .")", array_keys($account->roles));
+    // To reduce the number of SQL queries, we buffer the user's permissions
+    // in a static variable.
+    if (!isset($perm[$account->uid]))
+    {
+        $perms = array();
+        $result = db_query("SELECT p.perm FROM {role} r INNER JOIN {permission} p ON p.rid = r.rid WHERE r.rid IN (". db_placeholders($account->roles) .")", array_keys($account->roles));
 
-      while ($row = db_fetch_object($result)) 
-      {
-          $perms += explode(', ', $row->perm);
-      }
-    
-  }
-  
-  $result = array_intersect($perms, $keys);
-  
-  if(count($result) > 0)
-  {
-      return TRUE;
-  }
-  
-  return FALSE;
+        while ($row = db_fetch_object($result))
+        {
+            $perms += explode(', ', $row->perm);
+        }
 
+    }
+
+    $result = array_intersect($perms, $keys);
+
+    if(count($result) > 0)
+    {
+        return TRUE;
+    }
+
+    return FALSE;
+
+}
+
+/**
+ * Role access is necessary for controlling how tabs are shown by role and other
+ * jobs typically left to contrib modules
+ */
+
+function mvc_roles()
+{
+    return TRUE;
+}
+
+/**
+ * Links system
+ * 
+ */
+
+function mvc_links()
+{
+    return TRUE;
 }
 
 ?>
