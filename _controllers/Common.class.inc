@@ -9,7 +9,33 @@
  * 
  */
 
+/*
+ * This is a Singleton because there is no need to have more than one instance
+ * and hooks should always be created from a single area. At present Drupal modules
+ * can create hooks from anywhere which leads to confusion
+ *
+ */
+
 class Common{
+
+    static private $_instance;
+    private $data = array();
+
+
+    protected function __construct()
+    {
+        //Please extend this class to gain that functionality
+    }
+
+    final public function __clone()
+    {
+        throw new Exception('Please extend this Class to gain that functionality');
+    }
+
+    final public static function get_instance()
+    {
+        return isset(self::$_instance) ? self::$_instance : self::$_instance = new self();
+    }
 
 
     function get_hooks($modules, $hook = NULL)
@@ -19,7 +45,6 @@ class Common{
         // Need to get the name of the Class that is calling this function
         // Call its hook function directly and merge the result
         // This will prevent a infinate loop caaused by the use of a constuctor
-
 
 
         foreach ($modules as $module)
@@ -66,7 +91,8 @@ class Common{
              
         }
 
-        return $output;
+        $this->data = $output;
+        return $this->data;
     }
 
     function get_all_hooks($modules, $hooks = array())
@@ -78,7 +104,8 @@ class Common{
             $output[$hook] = $this->get_hooks($modules, $hook);
         }
 
-        return $output;
+        $this->data = $output;
+        return $this->data;
     }
 }
 

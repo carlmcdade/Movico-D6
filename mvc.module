@@ -22,20 +22,30 @@
 define('APP_TRIGGER', 'app');
 define('APP_PATH', drupal_get_path('module', 'mvc'));
 
+/*
+ * These global variables are necessary to carry values to the Classes nested
+ * in the module functions.
+ *
+ * @todo Module_list and hook_list should come from a configuration data source
+ * loaded by a Singleton Class
+ *
+ */
+
 global $hook_links, $hook_forms, $hook_content, $hook_blocks, $modules_list, $common, $hook_all;
 
 /*
  * @todo replace these hard coded value lists with dynamic variables, data
  * sources and administration GUI
+ * 
  */
 
 $modules_list = array('ConClass1','ConClass2','ConClass3','ConClass4','ConClass5');
 $hooks_list = array('hook_links','hook_forms','hook_content','hook_blocks');
 
-$common = new Common();
+$common = Common::get_instance();
 foreach($hooks_list as $hook)
 {
-    ${$hook} = $common->get_hooks($modules_list, $hook);
+    $$hook = $common->get_hooks($modules_list, $hook);
 }
 
 $hook_all = $common->get_all_hooks($modules_list, $hooks_list);
