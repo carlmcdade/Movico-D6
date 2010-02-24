@@ -21,13 +21,30 @@ class Common{
     static private $_instance;
     private $data = array();
 
+    private $modules_list = array('ConClass1','ConClass2','ConClass3','ConClass4','ConClass5');
+    private $hooks_list = array('hook_links','hook_forms','hook_content','hook_blocks','hook_all');
 
-    protected function __construct()
+
+    private function __construct()
     {
-        //Please extend this class to gain that functionality
+        //Please extend this class to gain extra functionality
+        foreach($this->hooks_list as $hook)
+        {
+            global $$hook;
+
+            if($hook == 'hook_all')
+            {
+                $$hook = $this->get_all_hooks($this->modules_list, $this->hooks_list);
+            }
+            else
+            {
+                $$hook = $this->get_hooks($this->modules_list, $hook);
+            }
+
+        }
     }
 
-    final public function __clone()
+    private function __clone()
     {
         throw new Exception('Please extend this Class to gain that functionality');
     }
@@ -49,21 +66,22 @@ class Common{
 
         foreach ($modules as $module)
         {
-            $Class = new ReflectionClass($module);
+            
             
             // hook may not exist in all modules. Handle exception with 
             // continue
             
             try
             {
+                $Class = new ReflectionClass($module);
                 $Method = new ReflectionMethod($Class->getName(), $hook);
+                $Instance = $Class->newInstance();
             }
             catch(Exception $e)
             {
                 continue;
             }
             
-            $Instance = $Class->newInstance();
             
 
             /*
