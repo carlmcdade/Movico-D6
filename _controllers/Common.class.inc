@@ -22,25 +22,20 @@ class Common{
     private $data = array();
 
     private $modules_list = array('ConClass1','ConClass2','ConClass3','ConClass4','ConClass5');
-    private $hooks_list = array('hook_links','hook_forms','hook_content','hook_blocks','hook_all');
+    private $hooks_list = array('hook_links','hook_forms','hook_content','hook_blocks');
 
 
     private function __construct()
     {
         //Please extend this class to gain extra functionality
+
+        global $hook_all;
+        $hook_all = $this->get_all_hooks($this->modules_list, $this->hooks_list);
+
         foreach($this->hooks_list as $hook)
         {
             global $$hook;
-
-            if($hook == 'hook_all')
-            {
-                $$hook = $this->get_all_hooks($this->modules_list, $this->hooks_list);
-            }
-            else
-            {
-                $$hook = $this->get_hooks($this->modules_list, $hook);
-            }
-
+            $$hook = $this->get_hooks($this->modules_list, $hook);
         }
     }
 
