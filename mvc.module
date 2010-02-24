@@ -39,28 +39,7 @@ define('APP_PATH', drupal_get_path('module', 'mvc'));
  * 
  */
 
-$modules_list = array('ConClass1','ConClass2','ConClass3','ConClass4','ConClass5');
-$hooks_list = array('hook_links','hook_forms','hook_content','hook_blocks','hook_all');
-
-
 $common = Common::get_instance();
-foreach($hooks_list as $hook)
-{
-    global $$hook;
-    
-    if($hook == 'hook_all')
-    {
-        $$hook = $common->get_all_hooks($modules_list, $hooks_list);
-    }
-    else
-    {
-        $$hook = $common->get_hooks($modules_list, $hook);
-    }
-    
-}
-
-
-
 
 
 /**
