@@ -158,7 +158,8 @@ class Common{
     {
         if(isset($this->ini_settings[$name]))
         {
-            return $this->ini_settings[$name];
+            $output = unserialize($this->ini_settings[$name]);
+            return $output;
 
         }
         else
@@ -172,13 +173,17 @@ class Common{
        ////update only on change
        if(!isset($this->ini_settings[$name]) || ($this->ini_settings[$name] != $value))
        {
-           $this->ini_settings[$name] = $value;
+           $this->ini_settings[$name] = serialize($value);
            $this->update = TRUE;
        }
        return;
 
     }
 
+    /*
+     * Sometimes you need or want to delete the variable completely
+     *
+     */
     function var_delete($name)
     {
         unset($this->ini_settings[$name]);

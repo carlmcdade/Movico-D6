@@ -43,6 +43,8 @@ class ConClass4{
         
         $common->var_set("appname", "movico is damn cool!");
         $common->var_set("trial", "error");
+        $common->var_set("password", array('user', 'pass'));
+
         
 
         $output = implode(' | ', $common->get_hooks('hook_links'));
@@ -51,28 +53,21 @@ class ConClass4{
         $output .= '<br />';
         $output .= $common->var_get("trial");
 
-        $common->var_delete('appname');
-
-        $common->var_set("trial", " new new error");
+        $common->var_set("trial", "tribulations");
 
         $output .= '<br />';
         $output .= $common->var_get("trial");
-
 
         $output .= '<br />';
         $output .= $common->var_get("appname");
 
         $output .= '<br />';
-        $output .= $common->var_get("password");
-        
+        $output .= $common->var_get("password");        
 
-        $common->var_set('truck', "catapiller");
+        $common->var_set("truck", "catapiller");
 
         $output .= '<br />';
-        $output .= $common->var_get("truck") . '<br />' . ' print';
-
-        $common->var_set("trial", "a new error");
-        
+        $output .= $common->var_get("truck");
         
         return mvc_view('default', $variables, $output);
         
