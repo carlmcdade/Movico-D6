@@ -48,7 +48,6 @@ class ConClass4{
 
     function test_me()
     {      
-
         
         $this->common->var_set("appname", "movico is damn cool!");
         $this->common->var_set("trial", "error");
