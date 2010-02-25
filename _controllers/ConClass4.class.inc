@@ -14,7 +14,18 @@
  *
  */
 
+
+
 class ConClass4{
+
+    private $common;
+
+
+    function __construct()
+    {
+        //Test the Common settings
+        $this->common = Common::get_instance();
+    }
 
 
     function hook_links()
@@ -38,34 +49,32 @@ class ConClass4{
     function test_me()
     {      
 
-        //Test the Common settings
-        $common = Common::get_instance();
         
-        $common->var_set("appname", "movico is damn cool!");
-        $common->var_set("trial", "error");
-        $common->var_set("password", array('user', 'pass'));        
+        $this->common->var_set("appname", "movico is damn cool!");
+        $this->common->var_set("trial", "error");
+        $this->common->var_set("password", array('user', 'pass'));
 
-        $output = implode(' | ', $common->get_hooks('hook_links'));
-        $output .= '<pre>' . print_r($common->get_all_hooks(), 1) . '</pre>';
-
-        $output .= '<br />';
-        $output .= $common->var_get("trial");
-
-        $common->var_set("trial", "tribulations");
+        $output = implode(' | ', $this->common->get_hooks('hook_links'));
+        $output .= '<pre>' . print_r($this->common->get_all_hooks(), 1) . '</pre>';
 
         $output .= '<br />';
-        $output .= $common->var_get("trial");
+        $output .= $this->common->var_get("trial");
+
+        $this->common->var_set("trial", "tribulations");
 
         $output .= '<br />';
-        $output .= $common->var_get("appname");
+        $output .= $this->common->var_get("trial");
 
         $output .= '<br />';
-        $output .= $common->var_get("password");        
-
-        $common->var_set("truck", "catapiller tractors");
+        $output .= $this->common->var_get("appname");
 
         $output .= '<br />';
-        $output .= $common->var_get("truck");
+        $output .= implode(' ', $this->common->var_get("password"));
+
+        $this->common->var_set("truck", "catapiller tractors");
+
+        $output .= '<br />';
+        $output .= $this->common->var_get("truck");
         
         return mvc_view('default', $variables, $output);
         
