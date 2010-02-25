@@ -35,7 +35,7 @@ class ConClass4{
 
     }
 
-    function action3()
+    function test_me()
     {      
 
         //Test the Common settings
@@ -43,9 +43,7 @@ class ConClass4{
         
         $common->var_set("appname", "movico is damn cool!");
         $common->var_set("trial", "error");
-        $common->var_set("password", array('user', 'pass'));
-
-        
+        $common->var_set("password", array('user', 'pass'));        
 
         $output = implode(' | ', $common->get_hooks('hook_links'));
         $output .= '<pre>' . print_r($common->get_all_hooks(), 1) . '</pre>';
@@ -64,7 +62,7 @@ class ConClass4{
         $output .= '<br />';
         $output .= $common->var_get("password");        
 
-        $common->var_set("truck", "catapiller");
+        $common->var_set("truck", "catapiller tractors");
 
         $output .= '<br />';
         $output .= $common->var_get("truck");

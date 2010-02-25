@@ -22,9 +22,10 @@ class Common{
     private $data = array();
     private $ini_settings = array();
     private $update = FALSE;
-    private $delete = FALSE;
 
-
+    /*
+     * @todo Update INI file methods to handle sections and add these to INI file
+     */
     private $modules_list = array('ConClass1','ConClass2','ConClass3','ConClass4','ConClass5');
     private $hooks_list = array('hook_links','hook_forms','hook_content','hook_blocks');
 
@@ -36,20 +37,37 @@ class Common{
 
         if(file_exists(INI_FILENAME))
         {
-            $this->ini_settings = parse_ini_file(INI_FILENAME);
+            /*
+             * suppress the warning that comes with using serialized data
+             * parse_ini_file() accepts and sends serialixzed data fine
+             *
+             * @todo Change this to PHP 5.3.0 a.s.a.p which will accept raw data
+             * by setting the parameter
+             *
+             */
+            $this->ini_settings =  @parse_ini_file(INI_FILENAME);
         }
 
     }
 
     function __destruct()
     {
-        
+
+        /*
+         * update check point
+         * @todo: Forgot that destructors do not respond to normal Exception
+         * handling. There are work arounds for this though.
+         *
+         */
+        if(!$this->update)
+        {
+            return;
+        }
+
         try
         {
-
-
             //overwrite INI file with the version in memory
-            unlink(INI_FILENAME);
+            
             $handle = fopen(INI_FILENAME, "w");
             foreach ($this->ini_settings as $key => $value)
             {
@@ -88,10 +106,6 @@ class Common{
     {
 
         $output = array();
-
-        // Need to get the name of the Class that is calling this function
-        // Call its hook function directly and merge the result
-        // This will prevent a infinate loop caaused by the use of a constuctor
 
 
         foreach ($this->modules_list as $module)

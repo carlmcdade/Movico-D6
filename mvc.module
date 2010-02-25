@@ -219,11 +219,15 @@ function mvc_perm()
 function mvc_access($uri)
 {
 
+    /*
+     * @todo Update INI file methods to handle sections and add these to INI file
+     */
+    
     $authorize = array(
         'hello' => array('access foo'),
         'hello_log' => array('access baz'),
         'hello_log_view' => array('access foo','access baz'),
-        'action3' => array('access foo','access baz'),
+        'test_me' => array('access foo','access baz'),
     );
 
     foreach($authorize as $key => $value)
