@@ -16,3 +16,8 @@ Benefits:
 ▪ A faster more dynamic and autonomous template system for modules. Create templates and variables that are free of theme templates and template.php files. Removes the need to refresh the theme registry cache.
 ▪ More scalability without after effects.
 ▪ Easier to add third-party solutions that use OOP design.
+
+Requirements:
+
+PHP 5.3.0 <
+This version of PHP is necessary because many features are changed ie. parse_ini_file() has a newer scan format parameter.
