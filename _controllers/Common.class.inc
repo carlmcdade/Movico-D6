@@ -20,6 +20,10 @@ class Common{
 
     static private $_instance;
     private $data = array();
+    private $ini_settings = array();
+    private $update = FALSE;
+    private $delete = FALSE;
+
 
     private $modules_list = array('ConClass1','ConClass2','ConClass3','ConClass4','ConClass5');
     private $hooks_list = array('hook_links','hook_forms','hook_content','hook_blocks');
@@ -27,17 +31,47 @@ class Common{
 
     private function __construct()
     {
+        
         //Please extend this class to gain extra functionality
 
-        global $hook_all;
-        $hook_all = $this->get_all_hooks($this->modules_list, $this->hooks_list);
-
-        foreach($this->hooks_list as $hook)
+        if(file_exists(INI_FILENAME))
         {
-            global $$hook;
-            $$hook = $this->get_hooks($this->modules_list, $hook);
+            $this->ini_settings = parse_ini_file(INI_FILENAME);
         }
+
     }
+
+    function __destruct()
+    {
+        
+        try
+        {
+
+
+            //overwrite INI file with the version in memory
+            unlink(INI_FILENAME);
+            $handle = fopen(INI_FILENAME, "w");
+            foreach ($this->ini_settings as $key => $value)
+            {
+                if(isset($this->delete) && in_array($key, $this->delete))
+                {
+                    continue;
+                }
+                
+                fwrite($handle, "$key = \"$value\"\n");
+            }
+
+            unset($this->delete);
+            fclose($handle);
+
+        }
+        catch(Exception $e)
+        {
+            trigger_error('Could not write to file.' . INI_FILENAME);
+        }
+
+    }
+
 
     private function __clone()
     {
@@ -50,8 +84,9 @@ class Common{
     }
 
 
-    function get_hooks($modules, $hook = NULL)
+    function get_hooks($hook = NULL)
     {
+
         $output = array();
 
         // Need to get the name of the Class that is calling this function
@@ -59,7 +94,7 @@ class Common{
         // This will prevent a infinate loop caaused by the use of a constuctor
 
 
-        foreach ($modules as $module)
+        foreach ($this->modules_list as $module)
         {
             
             
@@ -75,9 +110,7 @@ class Common{
             catch(Exception $e)
             {
                 continue;
-            }
-            
-            
+            }       
 
             /*
              * 
@@ -108,18 +141,51 @@ class Common{
         return $this->data;
     }
 
-    function get_all_hooks($modules, $hooks = array())
+    function get_all_hooks()
     {
         $output = array();
 
-        foreach ($hooks as $hook)
+        foreach ($this->hooks_list as $hook)
         {
-            $output[$hook] = $this->get_hooks($modules, $hook);
+            $output[$hook] = $this->get_hooks($hook);
         }
 
         $this->data = $output;
         return $this->data;
     }
+
+    public function var_get($name)
+    {
+        if(isset($this->ini_settings[$name]))
+        {
+            return $this->ini_settings[$name];
+
+        }
+        else
+        {
+            return(NULL);
+        }
+    }
+
+    public function var_set($name, $value)
+    {
+       ////update only on change
+       if(!isset($this->ini_settings[$name]) || ($this->ini_settings[$name] != $value))
+       {
+           $this->ini_settings[$name] = $value;
+           $this->update = TRUE;
+       }
+       return;
+
+    }
+
+    function var_delete($name)
+    {
+        unset($this->ini_settings[$name]);
+        $this->delete[] = $name;
+        return;
+    }
+
 }
 
 ?>

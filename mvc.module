@@ -21,6 +21,9 @@
 
 define('APP_TRIGGER', 'app');
 define('APP_PATH', drupal_get_path('module', 'mvc'));
+define('INI_FILENAME', $_SERVER['DOCUMENT_ROOT'] . base_path() . drupal_get_path('module', 'mvc') . "/_configuration/mvc.ini");
+
+
 
 /*
  * These global variables are necessary to carry values to the Classes nested
@@ -30,16 +33,6 @@ define('APP_PATH', drupal_get_path('module', 'mvc'));
  * loaded by a Singleton Class
  *
  */
-
-
-
-/*
- * @todo replace these hard coded value lists with dynamic variables, data
- * sources and administration GUI
- * 
- */
-
-$common = Common::get_instance();
 
 
 /**

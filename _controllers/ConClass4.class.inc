@@ -27,21 +27,55 @@ class ConClass4{
 
     function hook_forms()
     {
+        
         $var['ormu'] = l('form element','app/ConClass5/hello_log/update');
         $var['ormb'] = l('form element','app/ConClass5/hello_log/create');
 
         return $var;
+
     }
 
     function action3()
     {      
-        global $hook_links, $hook_all;
 
-        $output = implode(' | ', $hook_links);
-        $output .= '<pre>' . print_r($hook_all, 1) . '</pre>';
+        //Test the Common settings
+        $common = Common::get_instance();
+        
+        $common->var_set("appname", "movico is damn cool!");
+        $common->var_set("trial", "error");
         
 
+        $output = implode(' | ', $common->get_hooks('hook_links'));
+        $output .= '<pre>' . print_r($common->get_all_hooks(), 1) . '</pre>';
+
+        $output .= '<br />';
+        $output .= $common->var_get("trial");
+
+        $common->var_delete('appname');
+
+        $common->var_set("trial", " new new error");
+
+        $output .= '<br />';
+        $output .= $common->var_get("trial");
+
+
+        $output .= '<br />';
+        $output .= $common->var_get("appname");
+
+        $output .= '<br />';
+        $output .= $common->var_get("password");
+        
+
+        $common->var_set('truck', "catapiller");
+
+        $output .= '<br />';
+        $output .= $common->var_get("truck") . '<br />' . ' print';
+
+        $common->var_set("trial", "a new error");
+        
+        
         return mvc_view('default', $variables, $output);
+        
     }
 }
 
