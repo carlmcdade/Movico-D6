@@ -15,8 +15,8 @@ class ConClass1{
 
     function hook_links()
     {
-        $var['one'] = l('link text(1)','app/ConClass5/hello');
-        $var['two'] = l('link text(11)','app/ConClass5/hello_log_view');
+        $var['one'] = l('class_one(1)','app/ConClass1/action_one');
+        $var['two'] = l('class_one(2)','app/ConClass1/action_two');
 
         return $var;
     }
@@ -27,6 +27,20 @@ class ConClass1{
         $var['foo'] = l('form element','app/helloworld/hello_log/create');
 
         return $var;
+    }
+
+    function action_one()
+    {
+        $output = 'method one content';
+
+        return mvc_view('default', $variables, $output);
+    }
+
+    function action_two()
+    {
+        $output = 'method two content';
+
+        return mvc_view('default', $variables, $output);
     }
 }
 

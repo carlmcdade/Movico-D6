@@ -30,7 +30,7 @@ class ConClass4{
 
     function hook_links()
     {
-        $var['nksj'] = l('update','app/ConClass5/hello_log/update');
+        $var['nksj'] = l('test me','app/ConClass4/test_me');
         $var['nksk'] = l('create','app/ConClass5/hello_log/create');
 
         return $var;

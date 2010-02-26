@@ -83,14 +83,17 @@ function mvc_menu()
 
 function __autoload($class)
 {
-    try
-    {
-        require_once APP_PATH . '/_controllers/' . $class . '.class.inc';
-    }
-    catch(Exception $e)
+    $path = APP_PATH . '/_controllers/' . $class . '.class.inc';
+    
+    if(!file_exists($path))
     {
         drupal_not_found();
+        return;
+
     }
+    
+    require_once $path;
+
 
 }
 
@@ -105,11 +108,18 @@ function mvc_controller()
     // URI items after the /controller/action are loaded into the function as parameters
     $parameters = func_get_args(); 
 
-    $access = mvc_access($action);
+    $access = mvc_access($class . '/' . $action);
     if($access == TRUE)
-    {         
+    {
         $controller = new $class();
-        return $controller->$action($parameters[2]);   
+        if(method_exists($controller, $action))
+        {           
+            return $controller->$action($parameters[2]);
+        }
+        else
+        {
+            drupal_not_found();
+        }
 
     }
     else
@@ -224,11 +234,21 @@ function mvc_access($uri)
      */
     
     $authorize = array(
-        'hello' => array('access foo'),
-        'hello_log' => array('access baz'),
-        'hello_log_view' => array('access foo','access baz'),
-        'test_me' => array('access foo','access baz'),
+        'ConClass5/hello' => array('access foo'),
+        'ConClass5/hello_log' => array('access baz'),
+        'ConClass5/hello_log_view' => array('access foo','access baz'),
+        'ConClass4/test_me' => array('access foo','access baz'),
     );
+
+    /*
+     * Default all non-listed
+     */
+
+    $open = array_keys($authorize);
+    if(!in_array($uri, $open))
+    {
+        return TRUE;
+    }
 
     foreach($authorize as $key => $value)
     {
@@ -239,10 +259,6 @@ function mvc_access($uri)
         }
     }
 
-    if(!is_array($keys))
-    {
-        return FALSE;
-    }
 
     global $user;
     static $perm = array();
