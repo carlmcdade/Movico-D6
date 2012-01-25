@@ -10,9 +10,15 @@
  */
 
 /*
- * This is a Singleton because there is no need to have more than one instance
+ * This is loaded Singleton because there is no need to have more than one instance
  * and hooks should always be created from a single area. At present Drupal modules
- * can create hooks from anywhere which leads to confusion
+ * can create hooks from anywhere which leads to confusion. But it is a Facade pattern
+ * that wraps Drupals inner functions to prevent to protect the application from version 
+ * differences
+ *
+ */
+ 
+ /*
  *
  */
 
@@ -24,7 +30,7 @@ class Common{
     private $update = FALSE;
 
     /*
-     * @todo Update INI file methods to handle sections and add these to INI file
+     * @todo create a registry for modules and hooks
      */
     private $modules_list = array('ConClass1','ConClass2','ConClass3','ConClass4','ConClass5');
     private $hooks_list = array('hook_links','hook_forms','hook_content','hook_blocks');
@@ -204,6 +210,26 @@ class Common{
         $this->delete[] = $name;
         return;
     }
+    
+    /**
+	 * Role access is necessary for controlling how tabs are shown by role and other
+	 * jobs typically left to contrib modules
+	 */
+	
+	function mvc_roles()
+	{
+		return TRUE;
+	}
+	
+	/**
+	 * Links system
+	 * 
+	 */
+	
+	function mvc_links()
+	{
+		return TRUE;
+	}
 
 }
 

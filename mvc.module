@@ -55,7 +55,25 @@ define('INI_FILENAME', $_SERVER['DOCUMENT_ROOT'] . base_path() . drupal_get_path
 
 function mvc_menu()
 {
+	$items[ 'mvc' ] = array(
+        'page callback' => 'mvc_documentation',
+        'title' => 'MVC Documentation',
+        'access callback' => TRUE,
+        'type' => MENU_NORMAL_ITEM,
+        'weight' => -1
 
+    );
+    
+    $items[ 'mvc/demos' ] = array(
+        'page callback' => 'mvc_demos',
+        'title' => 'Demos',
+        'access callback' => TRUE,
+        'page arguments' => array(1, 2),
+        'type' => MENU_NORMAL_ITEM,
+        'weight' => 0
+
+    );
+    
     $items[ APP_TRIGGER . '/%/%' ] = array(
         'page callback' => 'mvc_controller',
         'page arguments' => array(1, 2),
@@ -66,6 +84,54 @@ function mvc_menu()
 
     return $items;
 
+}
+
+function mvc_help()
+{
+	//
+}
+
+function mvc_documentation()
+{
+	//
+	print theme('page','documentation and instruction pages');
+	
+}
+
+function mvc_demos()
+{
+	//Get the HTML/XML files
+	
+	$demo_links = array(
+			array(
+				'title' => 'Example 1', 
+				'description' => 'An example of chaining links together.', 
+				'link' => l('link','app/ConClass1/action_one')),
+			array(
+				'title' => 'Example 2', 
+				'description' => 'Theming example using the movico system.', 
+				'link' => l('link','app/ConClass2/hello')),
+			array(
+				'title' => 'Example 3', 
+				'description' => '', 
+				'link' => l('link', 'app/ConClass3/hello')),
+			array(
+				'title' => 'Example 4', 
+				'description' => '', 
+				'link' => l('link', 'app/ConClass4/hello')),
+		);
+	
+	$output = '<ul>';
+	foreach($demo_links as $demo)
+	{
+		foreach($demo as $row)
+		{
+			$output .= '<li>' . $row . '</li>';
+		}
+	}
+	$output .= '</ul>';
+	print theme('page', $output);
+	
 }
 
 /**
@@ -221,6 +287,9 @@ function mvc_view($view, $variables = NULL, $output = NULL)
  * 
  */
 
+ // this function uses Drupals internals to set the acl in the database so that it can be accessed later
+ // by the mvc_access() function.
+ 
 function mvc_perm()
 {
     return array('access foo', 'access baz');
@@ -229,8 +298,12 @@ function mvc_perm()
 function mvc_access($uri)
 {
 
-    /*
+    /**
      * @todo Update INI file methods to handle sections and add these to INI file
+     *
+     * the array of permission actually have to exists in the hook_perm fuction used by Drupal
+     * the reason I do this here is to enforce the controller/action convention
+     *
      */
     
     $authorize = array(
@@ -298,24 +371,6 @@ function mvc_access($uri)
 
 }
 
-/**
- * Role access is necessary for controlling how tabs are shown by role and other
- * jobs typically left to contrib modules
- */
 
-function mvc_roles()
-{
-    return TRUE;
-}
-
-/**
- * Links system
- * 
- */
-
-function mvc_links()
-{
-    return TRUE;
-}
 
 ?>

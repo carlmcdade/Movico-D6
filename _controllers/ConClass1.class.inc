@@ -12,6 +12,15 @@
 
 
 class ConClass1{
+	
+	private $common;
+
+
+    function __construct()
+    {
+        //Test the Common settings
+        $this->common = Common::get_instance();
+    }
 
     function hook_links()
     {
@@ -31,14 +40,23 @@ class ConClass1{
 
     function action_one()
     {
-        $output = 'method one content';
+        $output = implode(' | ', $this->common->get_hooks('hook_links'));
+        $output .= '<br />';
+    	$output .= 'method one content';
 
         return mvc_view('default', $variables, $output);
     }
 
     function action_two()
     {
-        $output = 'method two content';
+        //some variables to load into the view will appear as $[variable name]
+        $variables['start'] = '<div style="border:1px solid #eaeaea">start</div>'.mvc_access(__function__);
+        $variables['my_array'] = array('one','ton','son');
+        $variables['end'] = '<div style="border:1px solid #eaeaea">end</div>';
+    	
+    	$output = implode(' | ', $this->common->get_hooks('hook_links'));
+        $output .= '<br />';
+    	$output .= 'method two content';
 
         return mvc_view('default', $variables, $output);
     }

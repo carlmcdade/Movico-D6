@@ -11,6 +11,15 @@
  */
 
 class ConClass5{
+	
+	private $common;
+
+
+    function __construct()
+    {
+        //Test the Common settings
+        $this->common = Common::get_instance();
+    }
 
     function hook_links()
     {
@@ -35,30 +44,28 @@ class ConClass5{
         {
             // models return a view/model
             case 'create':
-                $form = mvc_model('example','get_create');
-                
-                // things get interesting here because you don't need hook form alter
-                unset($form['name']['#description']);
-                
-                $output = drupal_render($form);
+                $output = mvc_model('example','get_create');
                 $view = 'movico';
                 break;
-            case 'retrieve':
-                $variables = mvc_model('example','get_retrieve');
-                $view = 'default';
-                break;
-            case 'update':
-                $form = mvc_model('example','get_create');
                 
-                // things get interesting here because you don't need hook form alter
-                $form['submit']['#weight'] = 10;
+            case 'retrieve':
+            	
+                $variables['myform'] = mvc_model('example','get_retrieve');
+                $view = 'movico_form';
+                break;
+                
+            case 'update':
+            	
+            	$output = 'This is a plain string to show the use of the out parameter';
                 
                 // doing it a bit different and setting the form into a variable
-                $variables['start'] = '<div style="border:1px solid #eaeaea">start</div>'.mvc_access(__function__);
-                $variables['myform'] = drupal_render($form);
+                $variables['start'] = '<div style="border:1px solid #eaeaea">start</div>'.
+                //mvc_access(__function__);
+                $variables['myform'] = mvc_model('example','get_update');
                 $variables['end'] = '<div style="border:1px solid #eaeaea">end</div>';
                 $view = 'movico_form';
                 break;
+                
             case 'delete':
                 mvc_model('example','get_delete');
                 $view = 'deleted';

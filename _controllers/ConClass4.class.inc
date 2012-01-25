@@ -54,6 +54,7 @@ class ConClass4{
         $this->common->var_set("password", array('user', 'pass'));
 
         $output = implode(' | ', $this->common->get_hooks('hook_links'));
+        $output .= '<div> a presentation of the different hooks available</div>';
         $output .= '<pre>' . print_r($this->common->get_all_hooks(), 1) . '</pre>';
 
         $output .= '<br />';
