@@ -6,18 +6,34 @@ The template system for the application layer for modules is dependent on the pr
 
 What is Movico?
 
-What the Movico (MVC) module does is act as a connector and wrapper for an organized OOP application using the popular MVC design pattern. Six tersely coded functions let the web developer build software in Drupal using PHP object oriented features, recognizable design patterns and Classes for structure. Many of the problems encountered by using typical practices in Drupal module development are removed through the careful use of OOP structures and design. The organization, cataloging of functionality and documentation become easier. Placing as either a Model, View or Controller along with proper designation of code part as Classes, subclasses and methods makes for better code readability. Long term maintenance and upgrading to future version of Drupal are made easier with removal unneeded use of core functionality. One of the best things about building a module like this is that it becomes more of an autonomous or “third party” web application. This makes it quite simple to remove Drupals hooks from the application and move it to another environment or make it a self-reliable web app. This is why the Movico module will always only contain the bare minimum of code necessary to make the underlying application work. A developer will never feel as though it is too much trouble to yank the Movico module dump Drupal and go it alone.
+What the Movico (MVC) module does is act as a connector and wrapper for an organized OOP application using the popular MVC design pattern. Six tersely coded functions let the web developer build software in Drupal using PHP object oriented features, recognizable design patterns and Classes for structure. Many of the problems encountered by using typical practices in Drupal module development are removed through the careful use of OOP structures and design. The organization, cataloging of functionality and documentation become easier. Placing as either a Model, View or Controller along with proper designation of code part as Classes, subclasses and methods makes for better code readability. Long term maintenance and upgrading to future version of Drupal are made easier with removal unneeded use of core functionality. One of the best things about building a module like this is that it becomes more of an autonomous or â€œthird partyâ€� web application. This makes it quite simple to remove Drupals hooks from the application and move it to another environment or make it a self-reliable web app. This is why the Movico module will always only contain the bare minimum of code necessary to make the underlying application work. A developer will never feel as though it is too much trouble to yank the Movico module dump Drupal and go it alone.
 
 Benefits:
 
-▪ Speedy development using OOP and MVC letting developers use those same skills and knowledge in Drupal and cross to other PHP projects designed in OOP.
-▪ Simplicity and organization of code using object oriented design.
-▪ True dynamic access control without the need for menu cache refreshing.
-▪ A faster more dynamic and autonomous template system for modules. Create templates and variables that are free of theme templates and template.php files. Removes the need to refresh the theme registry cache.
-▪ More scalability without after effects.
-▪ Easier to add third-party solutions that use OOP design.
+* Speedy development using OOP and MVC letting developers use those same skills and knowledge in Drupal and cross to other PHP projects designed in OOP.
+* Simplicity and organization of code using object oriented design.
+* True dynamic access control without the need for menu cache refreshing.
+* A faster more dynamic and autonomous template system for modules. Create templates and variables that are free of theme templates and template.php files. Removes the need to refresh the theme registry cache.
+* More scalability without after effects.
+* Easier to add third-party solutions that use OOP design.
 
 Requirements:
 
 PHP 5.3.0 <
 This version of PHP is necessary because many features are changed ie. parse_ini_file() has a newer scan format parameter.
+
+
+Examples of how movico can be used:
+
+Drupal development habits fall into a few categories that cause confusion and unnessary use of modules. 
+
+* There is no separation of code in any pattern or convention. This makes finding a method or function that takes care of a database call or business logic just about impossible to find
+instinctivly.
+
+* Seperation takes place in dozens or even hundreds of php include files. While this may help with loading unecessary code it does nothing for organization and will cause developers 
+to remake code. Thus removing polymorphism.
+
+* Separation takes place in modules. While seperating a large code base into modules helps with organizing a large application between multiple developers it makes for a 
+mess when trying to troubleshoot a problem. It also adds lots of unneeded administration baggage to an application.
+
+* testing with conventional tools becomes a headache or impossible.
