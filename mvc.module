@@ -166,34 +166,59 @@ function __autoload($class)
 function mvc_controller()
 {
 
-    $class = arg(1);
-    $action = arg(2);
+	$class =  strtolower(arg(1));
+    $action =  strtolower(arg(2));
     
-
-
-    // URI items after the /controller/action are loaded into the function as parameters
-    $parameters = func_get_args(); 
-
-    $access = mvc_access($class . '/' . $action);
-    if($access == TRUE)
+    
+    
+    // internal admin url
+    if(arg(1) == 'admin')
     {
-        $controller = new $class();
-        if(method_exists($controller, $action))
-        {           
-            return $controller->$action($parameters[2]);
-        }
-        else
-        {
-            drupal_not_found();
-        }
-
+    	$class = strtolower(arg(2)) . '_admin';
+    	$action = strtolower(arg(3));
+    }
+    
+    // drupal admin url   
+    if(arg(0) == 'admin')
+    {
+    	$class = strtolower(arg(1)) . '_admin';
+    	
+    	// default to the index method of the class when a method is not found
+    	if(arg(2) == '')
+    	{
+    		$action = 'index';
+    	}
+    	else
+    	{
+    		$action = strtolower(arg(2));
+    	}
+    }
+    
+    // override uri if func_arg used
+    
+    $args = func_get_args();
+    
+    if(!empty($args) && arg(0) != APP_MODULE)
+    {
+    	//
+    	$class =  strtolower($args[1]);
+    	$action =  strtolower($args[2]);
+    }
+    
+    
+    $controller = new $class();
+    
+    if(method_exists($controller, $action))
+    {
+    	return $controller->$action($args); // send string of arguments
     }
     else
     {
-        drupal_access_denied();
+    	return drupal_not_found();
     }
 
 }
+
 
 
 
